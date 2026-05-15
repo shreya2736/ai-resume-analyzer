@@ -30,6 +30,39 @@ st.markdown("""
 <style>
 
 .main { padding-top: 1rem; }
+            
+/* Global dark theme override */
+html, body, [data-testid="stAppViewContainer"], .main, .stApp {
+    background-color: #0e1117 !important;
+}
+[data-testid="stAppViewContainer"] > .main {
+    background-color: #0e1117 !important;
+}
+[data-testid="stSidebar"] {
+    background-color: #1a1c29 !important;
+}
+body, .stMarkdown, .stText, .stTextInput, .stTextArea, label {
+    color: #e2e8f0 !important;
+}
+h1, h2, h3, h4, h5, h6, .section-header {
+    color: #e94560 !important;
+}
+.stTextInput > div > div > input, .stTextArea > div > div > textarea {
+    background-color: #1e1e2e !important;
+    color: #e2e8f0 !important;
+    border-color: #3d3d5c !important;
+}
+.stButton button {
+    background-color: #e94560 !important;
+    color: white !important;
+}
+.streamlit-expanderHeader {
+    background-color: #1e1e2e !important;
+    color: #e2e8f0 !important;
+}
+.stTabs [data-baseweb="tab-list"] {
+    background: #1e1e2e !important;
+}
 
 .header-banner {
     background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
@@ -515,13 +548,13 @@ if st.session_state.get('analysis_done'):
         st.markdown("<br>", unsafe_allow_html=True)
 
         # Score bars with labels
-        st.markdown("**🔤 TF-IDF Score — Keyword Matching (40% weight)**")
+        st.markdown("**🔤 TF-IDF Score — Keyword Matching (50% weight)**")
         render_score_bar(tfidf)
         st.markdown(f"Checks for exact keyword overlap between your resume and the JD.")
 
         st.markdown("<br>", unsafe_allow_html=True)
 
-        st.markdown("**🧠 Semantic Score — Meaning Matching (60% weight)**")
+        st.markdown("**🧠 Semantic Score — Meaning Matching (50% weight)**")
         render_score_bar(semantic)
         st.markdown(f"Understands conceptual similarity even when exact words differ.")
 
