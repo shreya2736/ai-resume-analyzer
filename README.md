@@ -26,7 +26,7 @@ An intelligent Streamlit web application that analyzes resumes against job descr
 - **PDF Parsing**: pdfplumber (primary) , PyPDF2 (fallback)
 
 ## Project Structure
-
+.
 ├── app.py                 # Main Streamlit application
 ├── requirements.txt       # Python dependencies
 ├── utils/
