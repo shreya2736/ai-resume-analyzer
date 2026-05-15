@@ -27,13 +27,13 @@ An intelligent Streamlit web application that analyzes resumes against job descr
 
 ## Project Structure
 
-├── app.py                 # Main Streamlit application
-├── requirements.txt       # Python dependencies
-├── utils/
-│   ├── parser.py          # PDF text extraction
-│   ├── matcher.py         # Skills extraction, TF‑IDF, semantic scoring
-│   ├── groq_api.py        # Groq API client & helper functions
-│   └── prompts.py         # Prompt templates for the LLM
+- `app.py` – Main Streamlit application
+- `requirements.txt` – Python dependencies
+- `utils/`
+  - `parser.py` – PDF text extraction
+  - `matcher.py` – Skills extraction, TF‑IDF, semantic scoring
+  - `groq_api.py` – Groq API client & helper functions
+  - `prompts.py` – Prompt templates for the LLM
 
 ##  Installation
 
