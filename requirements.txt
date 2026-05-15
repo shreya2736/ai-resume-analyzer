@@ -1,0 +1,7 @@
+streamlit
+groq
+PyPDF2
+pdfplumber
+scikit-learn
+pandas
+sentence-transformers
