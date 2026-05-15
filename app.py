@@ -227,6 +227,33 @@ h1, h2, h3, h4, h5, h6, .section-header {
     color: white !important;
 }
 
+/* Expander content - make text visible */
+.streamlit-expanderContent {
+    background-color: #1e1e2e !important;
+    color: #e2e8f0 !important;
+}
+
+/* The actual text inside the expander (from st.text) */
+.streamlit-expanderContent pre,
+.streamlit-expanderContent code,
+.streamlit-expanderContent .stText {
+    color: #e2e8f0 !important;
+    background-color: #1e1e2e !important;
+    border: none !important;
+}
+
+/* Any st.text output anywhere else */
+.stText {
+    color: #e2e8f0 !important;
+}
+
+/* For the text area placeholder */
+.stTextInput input::placeholder,
+.stTextArea textarea::placeholder {
+    color: #b0b0d0 !important;
+    opacity: 1 !important;
+}
+            
 </style>
 """, unsafe_allow_html=True)
 
