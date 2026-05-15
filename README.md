@@ -48,6 +48,11 @@ An intelligent Streamlit web application that analyzes resumes against job descr
     pip install -r requirements.txt
     sentence-transformers will download the all-MiniLM-L6-v2 model on first use (~80 MB).
 
+##  Running the App
+    ```bash
+    streamlit run app.py
+The app will open in your default browser at http://localhost:8501.
+
 ##  Getting a Groq API Key
 The AI features (feedback, role recommendations, rewriting, report generation) require a Groq API key.
 1. Go to console.groq.com
@@ -74,3 +79,5 @@ The AI features (feedback, role recommendations, rewriting, report generation) r
 - Scoring Weights – In calculate_hybrid_score(), the default is 50% TF‑IDF + 50% semantic. Adjust as needed.
 - LLM Model – Change model="llama-3.3-70b-versatile" in _call_groq() to another Groq model.
 
+##  Live Demo
+Try the app here: [AI Resume Analyzer](https://ai-resume-analyzer-sq25occpjmjdfmygnczvsk.streamlit.app/)
