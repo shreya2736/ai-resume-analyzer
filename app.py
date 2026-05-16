@@ -310,32 +310,43 @@ with st.sidebar:
     st.markdown("## ⚙️ Settings")
     st.markdown("---")
 
-    api_key = st.text_input(
-        "🔑 Groq API Key",
+    # Try user's own key first
+    user_key = st.text_input(
+        "🔑 Your Groq API Key (optional)",
         type="password",
-        placeholder="Paste your Groq API key here",
+        placeholder="Paste your own key for unlimited use",
         key="api_key_input"
     )
 
-    if api_key:
-        st.session_state['api_key'] = api_key
-    if 'api_key' in st.session_state:
-        api_key = st.session_state['api_key']
+    # Fall back to shared key from secrets
+    try:
+        fallback_key = st.secrets["GROQ_API_KEY"]
+    except Exception:
+        fallback_key = ""
 
-    if api_key:
-        st.success("✅ API Key saved!")
+    if user_key:
+        api_key = user_key
+        st.session_state['api_key'] = api_key
+        st.success("✅ Using your API key!")
+    elif fallback_key:
+        api_key = fallback_key
+        st.session_state['api_key'] = api_key
+        st.info("ℹ️ Using shared key — AI features ready!")
     else:
-        st.warning("⚠️ API key needed for AI features")
+        api_key = ""
+        st.session_state['api_key'] = ""
+        st.warning("⚠️ No API key available.")
 
     st.markdown("---")
-    st.markdown("**📌 How to get a free key:**")
+    st.markdown("**📌 Want unlimited use?**")
+    st.markdown("Get your own free key:")
     st.markdown("1. Visit [console.groq.com](https://console.groq.com)")
     st.markdown("2. Sign up — no credit card needed")
     st.markdown("3. API Keys → Create Key → Paste above")
 
     st.markdown("---")
     st.markdown("**🤖 Model:** Llama 3.3 70B via Groq")
-    
+        
 
     st.markdown("---")
     st.markdown("**✅ Features**")
@@ -409,12 +420,13 @@ if analyze_btn:
     with st.spinner("Analyzing your resume..."):
         resume_skills  = extract_skills(resume_text)
         jd_skills      = extract_skills(job_description)
-        ats_score, tfidf_score, semantic_score = calculate_hybrid_score(resume_text, job_description)
+        ats_score, tfidf_score, semantic_score, skill_score = calculate_hybrid_score(resume_text, job_description)
         common_skills  = get_common_skills(resume_skills, jd_skills)
         missing_skills = get_missing_skills(resume_skills, jd_skills)
 
         st.session_state['tfidf_score']    = tfidf_score
         st.session_state['semantic_score'] = semantic_score
+        st.session_state['skill_score']    = skill_score
         st.session_state['ats_score']      = ats_score
         st.session_state['missing_skills'] = missing_skills
         st.session_state['resume_skills']  = resume_skills
@@ -561,48 +573,55 @@ if st.session_state.get('analysis_done'):
 
         tfidf    = st.session_state.get('tfidf_score', 0)
         semantic = st.session_state.get('semantic_score', 0)
+        skill    = st.session_state.get('skill_score', 0)
         final    = st.session_state.get('ats_score', 0)
 
-        # Three metric cards
-        s1, s2, s3 = st.columns(3)
+        # Four metric cards
+        s1, s2, s3, s4 = st.columns(4)
         with s1:
-            render_metric(f"{tfidf}%", "TF-IDF Score")
+            render_metric(f"{skill}%", "Skill Overlap")
         with s2:
-            render_metric(f"{semantic}%", "Semantic Score")
+            render_metric(f"{tfidf}%", "TF-IDF Score")
         with s3:
-            render_metric(f"{final}%", "Final Hybrid Score")
+            render_metric(f"{semantic}%", "Semantic Score")
+        with s4:
+            render_metric(f"{final}%", "Final Score")
 
         st.markdown("<br>", unsafe_allow_html=True)
 
-        # Score bars with labels
-        st.markdown("**🔤 TF-IDF Score — Keyword Matching (50% weight)**")
+        st.markdown("**🎯 Skill Overlap Score — JD Skills Found in Resume (40% weight)**")
+        render_score_bar(skill)
+        st.markdown("Percentage of required JD skills detected in your resume. Most direct ATS metric.")
+
+        st.markdown("<br>", unsafe_allow_html=True)
+
+        st.markdown("**🔤 TF-IDF Score — Keyword Matching (30% weight)**")
         render_score_bar(tfidf)
-        st.markdown(f"Checks for exact keyword overlap between your resume and the JD.")
+        st.markdown("Checks for exact keyword overlap between your resume and the JD.")
 
         st.markdown("<br>", unsafe_allow_html=True)
 
-        st.markdown("**🧠 Semantic Score — Meaning Matching (50% weight)**")
+        st.markdown("**🧠 Semantic Score — Meaning Matching (30% weight)**")
         render_score_bar(semantic)
-        st.markdown(f"Understands conceptual similarity even when exact words differ.")
+        st.markdown("Understands conceptual similarity even when exact words differ.")
 
         st.markdown("<br>", unsafe_allow_html=True)
 
         st.markdown("**⭐ Final Hybrid Score — Weighted Combination**")
         render_score_bar(final)
-        st.markdown(f"Formula: **(0.5 × TF-IDF) + (0.5 × Semantic)**")
+        st.markdown("Formula: **(0.4 × Skill) + (0.3 × TF-IDF) + (0.3 × Semantic)**")
 
         st.markdown("<br>", unsafe_allow_html=True)
         st.markdown("---")
 
-        # Explanation box
         st.markdown("""
         **💡 How to read these scores:**
-        - **TF-IDF Score** is low when your resume doesn't use the same exact words as the JD. 
-          Fix this by mirroring keywords from the JD in your resume.
-        - **Semantic Score** reflects how conceptually aligned your resume is with the job. 
-          A higher semantic score means your experience is relevant even if worded differently.
-        - **Final Score** combines both. Aim for above 50% for a strong match.
+        - **Skill Overlap** is the most important — add missing JD skills to your resume to raise this.
+        - **TF-IDF Score** improves when you mirror exact keywords from the JD.
+        - **Semantic Score** reflects overall conceptual alignment with the job.
+        - **Final Score** combines all three. Aim for above 50% for a strong match.
         """)
+
 
 # ─────────────────────────────────────────────
 # DOWNLOAD REPORT SECTION

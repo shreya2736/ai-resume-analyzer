@@ -42,9 +42,8 @@ SKILLS_LIST = [
 ]
 
 # ─────────────────────────────────────────────
-# Load sentence transformer model once
-# Cached at module level so it doesn't
-# reload on every function call
+# SENTENCE TRANSFORMER MODEL
+# Loaded once and cached for reuse
 # ─────────────────────────────────────────────
 _semantic_model = None
 
@@ -66,6 +65,7 @@ def extract_skills(text):
     """
     Extract skills from text by matching
     against SKILLS_LIST using word boundaries.
+    Returns a list of matched skills.
     """
     found_skills = []
     text_lower   = text.lower()
@@ -101,29 +101,29 @@ def calculate_tfidf_score(resume_text, jd_text):
 
 def calculate_semantic_score(resume_text, jd_text):
     """
-    Semantic score using chunked encoding.
-    Splits resume into paragraphs and scores
-    each chunk against the JD, taking the average
-    of top matches for a fairer score.
+    Score 2 — Semantic Score (meaning matching).
+    Splits resume into chunks and scores each
+    chunk against JD. Takes average of top matches.
+    Returns a score from 0 to 100.
     """
     try:
         model = get_semantic_model()
 
-        # Split resume into chunks (paragraphs)
+        # Split resume into meaningful chunks
         chunks = [c.strip() for c in resume_text.split('\n') if len(c.strip()) > 30]
 
-        # If no chunks found fall back to full text
+        # Fall back to full text if no chunks found
         if not chunks:
             chunks = [resume_text]
 
-        # Encode JD and all chunks
+        # Encode JD and all resume chunks
         jd_embedding     = model.encode(jd_text, convert_to_tensor=True)
         chunk_embeddings = model.encode(chunks,  convert_to_tensor=True)
 
-        # Get similarity score for each chunk vs JD
+        # Score each chunk against the JD
         scores = util.cos_sim(chunk_embeddings, jd_embedding)
 
-        # Take average of top 5 scoring chunks
+        # Average of top 5 matching chunks
         top_scores = sorted(scores.tolist(), reverse=True)[:5]
         avg_score  = sum(s[0] for s in top_scores) / len(top_scores)
 
@@ -134,27 +134,66 @@ def calculate_semantic_score(resume_text, jd_text):
         return 0
 
 
+def calculate_skill_score(resume_text, jd_text):
+    """
+    Score 3 — Skill Overlap Score.
+    Calculates what percentage of JD skills
+    are present in the resume.
+
+    This is the most intuitive score:
+    - If JD needs 5 skills and resume has 4 → 80%
+    - If JD needs 5 skills and resume has 2 → 40%
+
+    Returns a score from 0 to 100.
+    """
+    resume_skills = extract_skills(resume_text)
+    jd_skills     = extract_skills(jd_text)
+
+    # If JD has no detectable skills return 0
+    if not jd_skills:
+        return 0
+
+    # Count how many JD skills appear in resume
+    resume_skill_set = set(s.lower() for s in resume_skills)
+    matched_count    = sum(1 for s in jd_skills if s.lower() in resume_skill_set)
+
+    score = (matched_count / len(jd_skills)) * 100
+    return round(score, 2)
+
+
 def calculate_hybrid_score(resume_text, jd_text):
     """
-    Final Score — Hybrid (TF-IDF + Semantic).
-    Combines both scoring methods:
-      - TF-IDF (40%)  : catches exact keyword matches
-      - Semantic (60%): catches conceptual similarity
+    Final Score — Three-way Hybrid.
 
-    Formula: (0.4 × tfidf) + (0.6 × semantic)
+    Combines three scoring methods:
+      - Skill Overlap (40%) : % of JD skills found in resume
+      - TF-IDF       (30%) : exact keyword matching
+      - Semantic     (30%) : conceptual similarity
+
+    Skill overlap gets highest weight because it's
+    the most direct and meaningful ATS metric.
+
+    Formula:
+        (0.4 × skill_score) + (0.3 × tfidf) + (0.3 × semantic)
 
     Returns:
-        final_score  : the weighted hybrid score
-        tfidf_score  : raw TF-IDF score (for display)
+        final_score   : weighted hybrid score (0-100)
+        tfidf_score   : raw TF-IDF score (for display)
         semantic_score: raw semantic score (for display)
+        skill_score   : raw skill overlap score (for display)
     """
     tfidf_score    = calculate_tfidf_score(resume_text, jd_text)
     semantic_score = calculate_semantic_score(resume_text, jd_text)
+    skill_score    = calculate_skill_score(resume_text, jd_text)
 
-    # New
-    final_score = round((0.5 * tfidf_score) + (0.5 * semantic_score), 2)
+    final_score = round(
+        (0.4 * skill_score) +
+        (0.3 * tfidf_score) +
+        (0.3 * semantic_score),
+        2
+    )
 
-    return final_score, tfidf_score, semantic_score
+    return final_score, tfidf_score, semantic_score, skill_score
 
 
 # ─────────────────────────────────────────────
@@ -162,7 +201,7 @@ def calculate_hybrid_score(resume_text, jd_text):
 # ─────────────────────────────────────────────
 def get_missing_skills(resume_skills, jd_skills):
     """
-    Skills in JD but missing from resume.
+    Skills present in JD but missing from resume.
     """
     resume_set = set(s.lower() for s in resume_skills)
     return [s for s in jd_skills if s.lower() not in resume_set]
