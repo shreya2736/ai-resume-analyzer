@@ -63,30 +63,31 @@ The app will open in your default browser at http://localhost:8501.
 
 ##  Getting a Groq API Key
 
-The AI features (feedback, role recommendations, rewriting, report generation) require a Groq API key.
-Option A — Use the shared key (no setup needed)
+1. The AI features (feedback, role recommendations, rewriting, report generation) require a Groq API key.
+
+2. Option A — Use the shared key (no setup needed)
 The app comes with a shared API key built in. Just open the app and use it directly.
-Option B — Use your own key (recommended for unlimited use)
 
-Go to console.groq.com
-Sign up — no credit card required
-Navigate to API Keys → Create API Key
-Paste it in the sidebar of the app
+3. Option B — Use your own key (recommended for unlimited use)
 
+  - Go to console.groq.com
+  - Sign up — no credit card required
+  - Navigate to API Keys → Create API Key
+  - Paste it in the sidebar of the app
 Your key takes priority over the shared key when entered.
 
-##  📖 How to Use
+## How to Use
 
 1. Open the app (no setup needed — shared key works out of the box)
 2. Upload your resume in PDF format
 3. Paste a job description into the text area
 4. Click Analyze My Resume
 5. Explore results across five tabs:
-  - 🎯 ATS Score — hybrid match score, matched and missing skills
-  - 💡 AI Feedback — specific section improvements and skills to learn
-  - 🎓 Role Recommendations — suggested job titles with match % and     upskill tips
-  - 📋 All Skills — side-by-side skill lists from resume and JD
-  - 📊 Score Breakdown — individual sub-scores with progress bars and explanation
+  -  ATS Score — hybrid match score, matched and missing skills
+  -  AI Feedback — specific section improvements and skills to learn
+  -  Role Recommendations — suggested job titles with match % and     upskill tips
+  -  All Skills — side-by-side skill lists from resume and JD
+  -  Score Breakdown — individual sub-scores with progress bars and explanation
 6. Scroll down to Download Report — generate and download a full analysis as .txt
 7. Scroll down to Resume Project Rewriter — paste a weak description and get a polished version
 
