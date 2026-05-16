@@ -8,11 +8,14 @@ An intelligent Streamlit web application that analyzes resumes against job descr
 - **PDF Resume Parsing** – Extracts text from PDFs using `pdfplumber` (fallback to `PyPDF2`).
 - **Skill Extraction** – Matches technical & soft skills from a curated master list.
 - **Hybrid ATS Scoring**:
-  - **TF‑IDF** (50%) – exact keyword matching.
-  - **Semantic** (50%) – conceptual similarity using sentence transformers.
+  - **TF‑IDF** (30%) – exact keyword matching.
+  - **Semantic** (30%) – conceptual similarity using sentence transformers.
+  - **Skill Overlap** (40%) — percentage of JD skills found in the resume (most direct ATS metric).
 - **Skill Gap Analysis** – Shows matched and missing skills.
 - **AI Feedback** – Direct, actionable suggestions to improve your resume.
+- **Shared API Key** — Works out of the box for all users. Optionally paste your own key for unlimited use.
 - **Role Recommendations** – Top 5 job titles with match % and upskill tips.
+- **Score Breakdown Tab** — Shows all three sub-scores with individual progress bars.
 - **Resume Project Rewriter** – Turns weak bullet points into strong, ATS-friendly descriptions.
 - **Downloadable Report** – Generates a plain‑text summary of the entire analysis.
 - **Custom CSS** – Modern dark UI with badges, progress bars, and tabs.
@@ -21,15 +24,20 @@ An intelligent Streamlit web application that analyzes resumes against job descr
 
 - **Frontend/App**: Streamlit
 - **LLM API**: Groq (Llama 3.3 70B)
-- **NLP/Embeddings**: Sentence‑Transformers (`all-MiniLM-L6-v2`)
-- **Text Similarity**: Scikit‑learn (TF‑IDF + cosine similarity)
+- **Semantic Scoring**: Sentence‑Transformers (`all-MiniLM-L6-v2`)
+- **Keyword Scoring**: Scikit‑learn (TF‑IDF + cosine similarity)
+- **Skill Scoring** : Regex-based skill overlap
 - **PDF Parsing**: pdfplumber (primary) , PyPDF2 (fallback)
 
 ## Project Structure
 
 - `app.py` – Main Streamlit application
 - `requirements.txt` – Python dependencies
+- `.gitignore` - Excludes secrets from GitHub
+- `.streamlit/`
+  - `secrets.toml ` - Groq API key (not pushed to GitHub)
 - `utils/`
+  - `__init__.py`
   - `parser.py` – PDF text extraction
   - `matcher.py` – Skills extraction, TF‑IDF, semantic scoring
   - `groq_api.py` – Groq API client & helper functions
@@ -46,7 +54,7 @@ An intelligent Streamlit web application that analyzes resumes against job descr
 
     ```bash
     pip install -r requirements.txt
-    sentence-transformers will download the all-MiniLM-L6-v2 model on first use (~80 MB).
+  sentence-transformers will download the all-MiniLM-L6-v2 model on first use (~80 MB).
 
 ##  Running the App
     ```bash
@@ -54,24 +62,33 @@ An intelligent Streamlit web application that analyzes resumes against job descr
 The app will open in your default browser at http://localhost:8501.
 
 ##  Getting a Groq API Key
-The AI features (feedback, role recommendations, rewriting, report generation) require a Groq API key.
-1. Go to console.groq.com
-2. Sign up (no credit card required)
-3. Navigate to API Keys → Create API Key
-4. Copy the key
 
-##  How to Use
-1. Enter your Groq API key in the sidebar (required for AI features).
-2. Upload your resume (PDF format).
-3. Paste a job description into the text area.
-4. Click Analyze My Resume.
-5. Explore the results across five tabs: ATS Score – hybrid match score, matched/missing skills.
-6. AI Feedback – specific improvements, skills to learn, action items.
-7. Role Recommendations – suggested job titles based on your resume.
-8. All Skills – side‑by‑side skill lists.
-9. Score Breakdown – TF‑IDF vs semantic scores.
-10. Generate a downloadable report (requires API key).
-11. Use the Project Rewriter – paste a weak project description and get a polished version.
+The AI features (feedback, role recommendations, rewriting, report generation) require a Groq API key.
+Option A — Use the shared key (no setup needed)
+The app comes with a shared API key built in. Just open the app and use it directly.
+Option B — Use your own key (recommended for unlimited use)
+
+Go to console.groq.com
+Sign up — no credit card required
+Navigate to API Keys → Create API Key
+Paste it in the sidebar of the app
+
+Your key takes priority over the shared key when entered.
+
+##  📖 How to Use
+
+1. Open the app (no setup needed — shared key works out of the box)
+2. Upload your resume in PDF format
+3. Paste a job description into the text area
+4. Click Analyze My Resume
+5. Explore results across five tabs:
+  - 🎯 ATS Score — hybrid match score, matched and missing skills
+  - 💡 AI Feedback — specific section improvements and skills to learn
+  - 🎓 Role Recommendations — suggested job titles with match % and     upskill tips
+  - 📋 All Skills — side-by-side skill lists from resume and JD
+  - 📊 Score Breakdown — individual sub-scores with progress bars and explanation
+6. Scroll down to Download Report — generate and download a full analysis as .txt
+7. Scroll down to Resume Project Rewriter — paste a weak description and get a polished version
 
 ##  Configuration
 
@@ -80,4 +97,5 @@ The AI features (feedback, role recommendations, rewriting, report generation) r
 - LLM Model – Change model="llama-3.3-70b-versatile" in _call_groq() to another Groq model.
 
 ##  Live Demo
+
 Try the app here: [AI Resume Analyzer](https://ai-resume-analyzer-sq25occpjmjdfmygnczvsk.streamlit.app/)
