@@ -8,9 +8,9 @@ An intelligent Streamlit web application that analyzes resumes against job descr
 - **PDF Resume Parsing** – Extracts text from PDFs using `pdfplumber` (fallback to `PyPDF2`).
 - **Skill Extraction** – Matches technical & soft skills from a curated master list.
 - **Hybrid ATS Scoring**:
-  - **TF‑IDF** (30%) – exact keyword matching.
+  - **TF‑IDF** (10%) – exact keyword matching.
   - **Semantic** (30%) – conceptual similarity using sentence transformers.
-  - **Skill Overlap** (40%) — percentage of JD skills found in the resume (most direct ATS metric).
+  - **Skill Overlap** (60%) — percentage of JD skills found in the resume (most direct ATS metric).
 - **Skill Gap Analysis** – Shows matched and missing skills.
 - **AI Feedback** – Direct, actionable suggestions to improve your resume.
 - **Shared API Key** — Works out of the box for all users. Optionally paste your own key for unlimited use.

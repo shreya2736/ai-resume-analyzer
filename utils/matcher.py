@@ -38,7 +38,30 @@ SKILLS_LIST = [
 
     # Soft Skills
     "Communication", "Leadership", "Teamwork", "Problem Solving",
-    "Critical Thinking", "Time Management"
+    "Critical Thinking", "Time Management",
+
+    # Data Science & Analytics
+    "Statistics", "Probability", "Data Wrangling", "Feature Engineering",
+    "Model Deployment", "XGBoost", "LightGBM", "Random Forest",
+    "Regression", "Classification", "Clustering", "Jupyter", "Streamlit",
+
+    # Tools & Practices
+    "Agile", "Scrum", "JIRA", "Confluence", "VS Code", "PyCharm",
+    "Postman", "Linux", "Shell Scripting", "Unit Testing", "pytest",
+
+    # Extra Web
+    "Next.js", "Express.js", "MongoDB Atlas", "Vercel", "Netlify",
+
+    # Extra AI
+    "Fine-tuning", "Vector Database", "Embeddings", "Stable Diffusion",
+    "Whisper", "BERT", "Transformers",
+
+    # Extra Cloud
+    "Streamlit Cloud", "Heroku", "Railway", "Render", "Lambda",
+
+    # Soft Skills
+    "Analytical Thinking", "Attention to Detail", "Collaboration",
+    "Presentation", "Documentation"
 ]
 
 # ─────────────────────────────────────────────
@@ -166,15 +189,15 @@ def calculate_hybrid_score(resume_text, jd_text):
     Final Score — Three-way Hybrid.
 
     Combines three scoring methods:
-      - Skill Overlap (40%) : % of JD skills found in resume
-      - TF-IDF       (30%) : exact keyword matching
+      - Skill Overlap (60%) : % of JD skills found in resume
+      - TF-IDF       (10%) : exact keyword matching
       - Semantic     (30%) : conceptual similarity
 
     Skill overlap gets highest weight because it's
     the most direct and meaningful ATS metric.
 
     Formula:
-        (0.4 × skill_score) + (0.3 × tfidf) + (0.3 × semantic)
+        (0.6 × skill_score) + (0.1 × tfidf) + (0.3 × semantic)
 
     Returns:
         final_score   : weighted hybrid score (0-100)
@@ -187,8 +210,8 @@ def calculate_hybrid_score(resume_text, jd_text):
     skill_score    = calculate_skill_score(resume_text, jd_text)
 
     final_score = round(
-        (0.4 * skill_score) +
-        (0.3 * tfidf_score) +
+        (0.6 * skill_score) +
+        (0.1 * tfidf_score) +
         (0.3 * semantic_score),
         2
     )

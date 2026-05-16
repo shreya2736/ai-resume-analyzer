@@ -589,13 +589,13 @@ if st.session_state.get('analysis_done'):
 
         st.markdown("<br>", unsafe_allow_html=True)
 
-        st.markdown("**🎯 Skill Overlap Score — JD Skills Found in Resume (40% weight)**")
+        st.markdown("**🎯 Skill Overlap Score — JD Skills Found in Resume (60% weight)**")
         render_score_bar(skill)
         st.markdown("Percentage of required JD skills detected in your resume. Most direct ATS metric.")
 
         st.markdown("<br>", unsafe_allow_html=True)
 
-        st.markdown("**🔤 TF-IDF Score — Keyword Matching (30% weight)**")
+        st.markdown("**🔤 TF-IDF Score — Keyword Matching (10% weight)**")
         render_score_bar(tfidf)
         st.markdown("Checks for exact keyword overlap between your resume and the JD.")
 
@@ -609,7 +609,7 @@ if st.session_state.get('analysis_done'):
 
         st.markdown("**⭐ Final Hybrid Score — Weighted Combination**")
         render_score_bar(final)
-        st.markdown("Formula: **(0.4 × Skill) + (0.3 × TF-IDF) + (0.3 × Semantic)**")
+        st.markdown("Formula: **(0.6 × Skill) + (0.1 × TF-IDF) + (0.3 × Semantic)**")
 
         st.markdown("<br>", unsafe_allow_html=True)
         st.markdown("---")
