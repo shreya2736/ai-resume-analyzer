@@ -99,4 +99,4 @@ Your key takes priority over the shared key when entered.
 
 ##  Live Demo
 
-Try the app here: [AI Resume Analyzer](https://ai-resume-analyzer-sq25occpjmjdfmygnczvsk.streamlit.app/)
+Try the app here: [AI Resume Analyzer](https://ai-resume-analyzer-djvcztykawa4bkpqmkuvue.streamlit.app/)
