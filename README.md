@@ -94,7 +94,7 @@ Your key takes priority over the shared key when entered.
 ##  Configuration
 
 - Skill List – Edit SKILLS_LIST in matcher.py to add or remove skills.
-- Scoring Weights – In calculate_hybrid_score(), the default is 50% TF‑IDF + 50% semantic. Adjust as needed.
+- Scoring Weights – In calculate_hybrid_score(), the default is 10% TF‑IDF + 30% semantic + 60% skill overlap. Adjust as needed.
 - LLM Model – Change model="llama-3.3-70b-versatile" in _call_groq() to another Groq model.
 
 ##  Live Demo
