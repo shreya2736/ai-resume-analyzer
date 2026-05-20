@@ -7,15 +7,16 @@ An intelligent Streamlit web application that analyzes resumes against job descr
 
 - **PDF Resume Parsing** – Extracts text from PDFs using `pdfplumber` (fallback to `PyPDF2`).
 - **Skill Extraction** – Matches technical & soft skills from a curated master list.
-- **Hybrid ATS Scoring**:
-  - **TF‑IDF** (10%) – exact keyword matching.
-  - **Semantic** (30%) – conceptual similarity using sentence transformers.
-  - **Skill Overlap** (60%) — percentage of JD skills found in the resume (most direct ATS metric).
+- **Hybrid ATS Scoring** — Four-way scoring system:
+  - **Skill Overlap (50%)** — percentage of JD skills found in the resume.
+  - **Title Match (20%)** — job role alignment using a curated job titles list.
+  - **Semantic (20%)** — conceptual similarity using sentence transformers.
+  - **TF-IDF (10%)** — exact keyword matching.
 - **Skill Gap Analysis** – Shows matched and missing skills.
 - **AI Feedback** – Direct, actionable suggestions to improve your resume.
 - **Shared API Key** — Works out of the box for all users. Optionally paste your own key for unlimited use.
 - **Role Recommendations** – Top 5 job titles with match % and upskill tips.
-- **Score Breakdown Tab** — Shows all three sub-scores with individual progress bars.
+- **Score Breakdown Tab** — Shows all four sub-scores (Skill Overlap, Title Match, Semantic, TF-IDF) with individual progress bars and explanations.
 - **Resume Project Rewriter** – Turns weak bullet points into strong, ATS-friendly descriptions.
 - **Downloadable Report** – Generates a plain‑text summary of the entire analysis.
 - **Custom CSS** – Modern dark UI with badges, progress bars, and tabs.
@@ -27,6 +28,7 @@ An intelligent Streamlit web application that analyzes resumes against job descr
 - **Semantic Scoring**: Sentence‑Transformers (`all-MiniLM-L6-v2`)
 - **Keyword Scoring**: Scikit‑learn (TF‑IDF + cosine similarity)
 - **Skill Scoring** : Regex-based skill overlap
+- **Title Matching** : Lightweight job title extraction (alternative to full NER)
 - **PDF Parsing**: pdfplumber (primary) , PyPDF2 (fallback)
 
 ## Project Structure
@@ -39,7 +41,7 @@ An intelligent Streamlit web application that analyzes resumes against job descr
 - `utils/`
   - `__init__.py`
   - `parser.py` – PDF text extraction
-  - `matcher.py` – Skills extraction, TF‑IDF, semantic scoring
+  - `matcher.py` – Skill extraction, job title matching, TF-IDF, semantic scoring, hybrid scoring
   - `groq_api.py` – Groq API client & helper functions
   - `prompts.py` – Prompt templates for the LLM
 
@@ -94,7 +96,8 @@ Your key takes priority over the shared key when entered.
 ##  Configuration
 
 - Skill List – Edit SKILLS_LIST in matcher.py to add or remove skills.
-- Scoring Weights – In calculate_hybrid_score(), the default is 10% TF‑IDF + 30% semantic + 60% skill overlap. Adjust as needed.
+- Scoring Weights – In calculate_hybrid_score(), the default formula is **(0.5 × Skill Overlap) + (0.2 × Title Match) + (0.2 × Semantic) + (0.1 × TF-IDF)**. Adjust as needed.
+- Job Titles List – Edit `JOB_TITLES` in `matcher.py` to add or remove job titles for title matching.
 - LLM Model – Change model="llama-3.3-70b-versatile" in _call_groq() to another Groq model.
 
 ##  Live Demo

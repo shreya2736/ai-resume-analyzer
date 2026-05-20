@@ -420,13 +420,14 @@ if analyze_btn:
     with st.spinner("Analyzing your resume..."):
         resume_skills  = extract_skills(resume_text)
         jd_skills      = extract_skills(job_description)
-        ats_score, tfidf_score, semantic_score, skill_score = calculate_hybrid_score(resume_text, job_description)
+        ats_score, tfidf_score, semantic_score, skill_score, title_score = calculate_hybrid_score(resume_text, job_description)
         common_skills  = get_common_skills(resume_skills, jd_skills)
         missing_skills = get_missing_skills(resume_skills, jd_skills)
 
         st.session_state['tfidf_score']    = tfidf_score
         st.session_state['semantic_score'] = semantic_score
         st.session_state['skill_score']    = skill_score
+        st.session_state['title_score']    = title_score
         st.session_state['ats_score']      = ats_score
         st.session_state['missing_skills'] = missing_skills
         st.session_state['resume_skills']  = resume_skills
@@ -574,52 +575,61 @@ if st.session_state.get('analysis_done'):
         tfidf    = st.session_state.get('tfidf_score', 0)
         semantic = st.session_state.get('semantic_score', 0)
         skill    = st.session_state.get('skill_score', 0)
+        title    = st.session_state.get('title_score', 0)
         final    = st.session_state.get('ats_score', 0)
 
-        # Four metric cards
-        s1, s2, s3, s4 = st.columns(4)
+        s1, s2, s3, s4, s5 = st.columns(5)
         with s1:
             render_metric(f"{skill}%", "Skill Overlap")
         with s2:
-            render_metric(f"{tfidf}%", "TF-IDF Score")
+            render_metric(f"{title}%", "Title Match")
         with s3:
             render_metric(f"{semantic}%", "Semantic Score")
         with s4:
+            render_metric(f"{tfidf}%", "TF-IDF Score")
+        with s5:
             render_metric(f"{final}%", "Final Score")
 
         st.markdown("<br>", unsafe_allow_html=True)
 
-        st.markdown("**🎯 Skill Overlap Score — JD Skills Found in Resume (60% weight)**")
+        st.markdown("**🎯 Skill Overlap — JD Skills in Resume (50% weight)**")
         render_score_bar(skill)
-        st.markdown("Percentage of required JD skills detected in your resume. Most direct ATS metric.")
+        st.markdown("Percentage of required JD skills detected in your resume.")
+
+        st.markdown("<br>", unsafe_allow_html=True)
+
+        st.markdown("**💼 Title Match — Job Role Alignment (20% weight)**")
+        render_score_bar(title)
+        st.markdown("How well your job titles align with the role being applied for.")
+
+        st.markdown("<br>", unsafe_allow_html=True)
+
+        st.markdown("**🧠 Semantic Score — Meaning Matching (20% weight)**")
+        render_score_bar(semantic)
+        st.markdown("Conceptual similarity even when exact words differ.")
 
         st.markdown("<br>", unsafe_allow_html=True)
 
         st.markdown("**🔤 TF-IDF Score — Keyword Matching (10% weight)**")
         render_score_bar(tfidf)
-        st.markdown("Checks for exact keyword overlap between your resume and the JD.")
+        st.markdown("Exact keyword overlap between resume and JD.")
 
         st.markdown("<br>", unsafe_allow_html=True)
 
-        st.markdown("**🧠 Semantic Score — Meaning Matching (30% weight)**")
-        render_score_bar(semantic)
-        st.markdown("Understands conceptual similarity even when exact words differ.")
-
-        st.markdown("<br>", unsafe_allow_html=True)
-
-        st.markdown("**⭐ Final Hybrid Score — Weighted Combination**")
+        st.markdown("**⭐ Final Hybrid Score**")
         render_score_bar(final)
-        st.markdown("Formula: **(0.6 × Skill) + (0.1 × TF-IDF) + (0.3 × Semantic)**")
+        st.markdown("Formula: **(0.5 × Skill) + (0.2 × Title) + (0.2 × Semantic) + (0.1 × TF-IDF)**")
 
         st.markdown("<br>", unsafe_allow_html=True)
         st.markdown("---")
 
         st.markdown("""
         **💡 How to read these scores:**
-        - **Skill Overlap** is the most important — add missing JD skills to your resume to raise this.
-        - **TF-IDF Score** improves when you mirror exact keywords from the JD.
+        - **Skill Overlap** is the most important — add missing JD skills to raise this.
+        - **Title Match** improves when your resume mentions the exact role title from the JD.
         - **Semantic Score** reflects overall conceptual alignment with the job.
-        - **Final Score** combines all three. Aim for above 50% for a strong match.
+        - **TF-IDF Score** improves when you mirror exact keywords from the JD.
+        - **Final Score** combines all four. Aim for above 50% for a strong match.
         """)
 
 

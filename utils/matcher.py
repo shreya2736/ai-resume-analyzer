@@ -14,23 +14,35 @@ SKILLS_LIST = [
     # Web Development
     "HTML", "CSS", "React", "Angular", "Vue", "Node.js", "Flask", "Django",
     "FastAPI", "REST API", "GraphQL", "Bootstrap", "Tailwind",
+    "Next.js", "Express.js", "Vercel", "Netlify",
 
     # Data & ML
     "Machine Learning", "Deep Learning", "NLP", "Computer Vision",
     "TensorFlow", "PyTorch", "Keras", "Scikit-learn", "OpenCV",
     "Pandas", "NumPy", "Matplotlib", "Seaborn", "Plotly",
+    "XGBoost", "LightGBM", "Random Forest", "Regression",
+    "Classification", "Clustering", "Feature Engineering",
+    "Data Wrangling", "Model Deployment", "Statistics", "Probability",
 
     # Databases
     "SQL", "MySQL", "PostgreSQL", "MongoDB", "SQLite", "Redis",
-    "Firebase", "Oracle", "NoSQL",
+    "Firebase", "Oracle", "NoSQL", "MongoDB Atlas",
 
     # Cloud & DevOps
     "AWS", "Azure", "GCP", "Docker", "Kubernetes", "Git", "GitHub",
     "CI/CD", "Linux", "Bash", "Terraform", "Jenkins",
+    "Streamlit Cloud", "Heroku", "Railway", "Render", "Lambda",
+    "Shell Scripting",
+
+    # Tools & Practices
+    "Agile", "Scrum", "JIRA", "Confluence", "VS Code", "PyCharm",
+    "Postman", "Jupyter", "Streamlit", "Unit Testing", "pytest",
 
     # AI & GenAI
     "Generative AI", "LLM", "Prompt Engineering", "Langchain",
     "Hugging Face", "OpenAI", "Gemini", "RAG",
+    "Fine-tuning", "Vector Database", "Embeddings",
+    "Stable Diffusion", "Whisper", "BERT", "Transformers",
 
     # Data Engineering
     "Spark", "Hadoop", "Kafka", "Airflow", "ETL", "Power BI",
@@ -38,30 +50,50 @@ SKILLS_LIST = [
 
     # Soft Skills
     "Communication", "Leadership", "Teamwork", "Problem Solving",
-    "Critical Thinking", "Time Management",
+    "Critical Thinking", "Time Management", "Analytical Thinking",
+    "Attention to Detail", "Collaboration", "Presentation",
+    "Documentation"
+]
 
-    # Data Science & Analytics
-    "Statistics", "Probability", "Data Wrangling", "Feature Engineering",
-    "Model Deployment", "XGBoost", "LightGBM", "Random Forest",
-    "Regression", "Classification", "Clustering", "Jupyter", "Streamlit",
+# ─────────────────────────────────────────────
+# JOB TITLES LIST
+# Used for simple title matching —
+# a lightweight alternative to full NER
+# ─────────────────────────────────────────────
+JOB_TITLES = [
+    # Software Engineering
+    "Software Engineer", "Software Developer", "Full Stack Developer",
+    "Frontend Developer", "Backend Developer", "Web Developer",
+    "Mobile Developer", "iOS Developer", "Android Developer",
+    "Embedded Engineer", "Systems Engineer",
 
-    # Tools & Practices
-    "Agile", "Scrum", "JIRA", "Confluence", "VS Code", "PyCharm",
-    "Postman", "Linux", "Shell Scripting", "Unit Testing", "pytest",
+    # Data & ML
+    "Data Scientist", "Data Analyst", "Data Engineer",
+    "Machine Learning Engineer", "ML Engineer", "AI Engineer",
+    "NLP Engineer", "Computer Vision Engineer", "Research Engineer",
+    "Research Scientist", "Applied Scientist",
 
-    # Extra Web
-    "Next.js", "Express.js", "MongoDB Atlas", "Vercel", "Netlify",
+    # Cloud & DevOps
+    "DevOps Engineer", "Cloud Engineer", "Site Reliability Engineer",
+    "Platform Engineer", "Infrastructure Engineer",
 
-    # Extra AI
-    "Fine-tuning", "Vector Database", "Embeddings", "Stable Diffusion",
-    "Whisper", "BERT", "Transformers",
+    # Specialized
+    "Python Developer", "Java Developer", "JavaScript Developer",
+    "React Developer", "Django Developer", "Flask Developer",
+    "Database Administrator", "Security Engineer",
+    "Blockchain Developer", "Game Developer",
 
-    # Extra Cloud
-    "Streamlit Cloud", "Heroku", "Railway", "Render", "Lambda",
+    # Analytics & BI
+    "Business Analyst", "Product Analyst", "BI Developer",
+    "Analytics Engineer", "Reporting Analyst",
 
-    # Soft Skills
-    "Analytical Thinking", "Attention to Detail", "Collaboration",
-    "Presentation", "Documentation"
+    # Management
+    "Tech Lead", "Engineering Manager", "Product Manager",
+    "Project Manager", "Scrum Master",
+
+    # Internship / Entry level
+    "Software Intern", "Data Science Intern", "ML Intern",
+    "Developer Intern", "Engineering Intern"
 ]
 
 # ─────────────────────────────────────────────
@@ -99,6 +131,26 @@ def extract_skills(text):
             found_skills.append(skill)
 
     return found_skills
+
+
+# ─────────────────────────────────────────────
+# JOB TITLE EXTRACTION
+# ─────────────────────────────────────────────
+def extract_job_titles(text):
+    """
+    Extract job titles from text by matching
+    against JOB_TITLES list.
+    Returns a list of matched titles.
+    """
+    found_titles = []
+    text_lower   = text.lower()
+
+    for title in JOB_TITLES:
+        pattern = r'\b' + re.escape(title.lower()) + r'\b'
+        if re.search(pattern, text_lower):
+            found_titles.append(title)
+
+    return found_titles
 
 
 # ─────────────────────────────────────────────
@@ -162,61 +214,112 @@ def calculate_skill_score(resume_text, jd_text):
     Score 3 — Skill Overlap Score.
     Calculates what percentage of JD skills
     are present in the resume.
-
-    This is the most intuitive score:
-    - If JD needs 5 skills and resume has 4 → 80%
-    - If JD needs 5 skills and resume has 2 → 40%
-
     Returns a score from 0 to 100.
     """
     resume_skills = extract_skills(resume_text)
     jd_skills     = extract_skills(jd_text)
 
-    # If JD has no detectable skills return 0
     if not jd_skills:
         return 0
 
-    # Count how many JD skills appear in resume
     resume_skill_set = set(s.lower() for s in resume_skills)
     matched_count    = sum(1 for s in jd_skills if s.lower() in resume_skill_set)
 
-    score = (matched_count / len(jd_skills)) * 100
-    return round(score, 2)
+    return round((matched_count / len(jd_skills)) * 100, 2)
+
+
+def calculate_title_score(resume_text, jd_text):
+    """
+    Score 4 — Job Title Match Score.
+    Lightweight alternative to full NER.
+    Checks if the job titles in the JD
+    are present or closely related in the resume.
+
+    Logic:
+    - If resume contains exact JD title → 100%
+    - If resume contains a related title → 60%
+      (e.g. "ML Engineer" vs "AI Engineer")
+    - If no title found in JD → neutral 50%
+    - If no match at all → 0%
+
+    Returns a score from 0 to 100.
+    """
+    resume_titles = extract_job_titles(resume_text)
+    jd_titles     = extract_job_titles(jd_text)
+
+    # If JD has no detectable title give neutral score
+    if not jd_titles:
+        return 50
+
+    resume_title_set = set(t.lower() for t in resume_titles)
+
+    exact_matches   = 0
+    related_matches = 0
+
+    for jd_title in jd_titles:
+        jd_lower = jd_title.lower()
+
+        # Exact match
+        if jd_lower in resume_title_set:
+            exact_matches += 1
+            continue
+
+        # Related match — check if key words overlap
+        # e.g. "ML Engineer" and "Machine Learning Engineer"
+        jd_words = set(jd_lower.split())
+        for resume_title in resume_titles:
+            resume_words = set(resume_title.lower().split())
+            common_words = jd_words & resume_words
+            # If more than half the words match → related
+            if len(common_words) >= max(1, len(jd_words) // 2):
+                related_matches += 1
+                break
+
+    total = len(jd_titles)
+    score = ((exact_matches * 1.0) + (related_matches * 0.6)) / total * 100
+    return round(min(score, 100), 2)
 
 
 def calculate_hybrid_score(resume_text, jd_text):
     """
-    Final Score — Three-way Hybrid.
+    Final Score — Four-way Hybrid.
 
-    Combines three scoring methods:
-      - Skill Overlap (60%) : % of JD skills found in resume
-      - TF-IDF       (10%) : exact keyword matching
-      - Semantic     (30%) : conceptual similarity
+    Combines four scoring methods:
+      - Skill Overlap  (50%) : % of JD skills found in resume
+      - Semantic       (20%) : conceptual similarity
+      - Title Match    (20%) : job title alignment
+      - TF-IDF         (10%) : exact keyword matching
 
-    Skill overlap gets highest weight because it's
+    Skill overlap gets highest weight as it's
     the most direct and meaningful ATS metric.
+    TF-IDF gets lowest weight as it naturally
+    scores low on long documents.
 
     Formula:
-        (0.6 × skill_score) + (0.1 × tfidf) + (0.3 × semantic)
+        (0.5 × skill) + (0.2 × semantic) +
+        (0.2 × title) + (0.1 × tfidf)
 
     Returns:
-        final_score   : weighted hybrid score (0-100)
-        tfidf_score   : raw TF-IDF score (for display)
-        semantic_score: raw semantic score (for display)
-        skill_score   : raw skill overlap score (for display)
+        final_score   : weighted hybrid score
+        tfidf_score   : raw TF-IDF score
+        semantic_score: raw semantic score
+        skill_score   : raw skill overlap score
+        title_score   : raw title match score
     """
     tfidf_score    = calculate_tfidf_score(resume_text, jd_text)
     semantic_score = calculate_semantic_score(resume_text, jd_text)
     skill_score    = calculate_skill_score(resume_text, jd_text)
+    title_score    = calculate_title_score(resume_text, jd_text)
 
     final_score = round(
-        (0.6 * skill_score) +
-        (0.1 * tfidf_score) +
-        (0.3 * semantic_score),
+        (0.5 * skill_score)   +
+        (0.2 * semantic_score) +
+        (0.2 * title_score)   +
+        (0.1 * tfidf_score),
         2
     )
 
-    return final_score, tfidf_score, semantic_score, skill_score
+    return final_score, tfidf_score, semantic_score, skill_score, title_score
 
 
 # ─────────────────────────────────────────────
