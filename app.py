@@ -790,6 +790,6 @@ with rw2:
 # ─────────────────────────────────────────────
 st.markdown("""
 <div class="footer">
-    Built with Streamlit · Powered by Groq (Llama 3.3 70B) · AI Resume Analyzer
+    Built with Streamlit · Powered by Groq (GPT-OSS 120B) · AI Resume Analyzer
 </div>
 """, unsafe_allow_html=True)

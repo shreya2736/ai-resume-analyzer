@@ -1,6 +1,6 @@
 # AI Resume Analyzer 📄
 
-An intelligent Streamlit web application that analyzes resumes against job descriptions. It provides ATS-style matching scores, skill gap analysis, AI-powered feedback, role recommendations, and a project rewriter – all powered by Groq’s Llama 3.3 70B model.
+An intelligent Streamlit web application that analyzes resumes against job descriptions. It provides ATS-style matching scores, skill gap analysis, AI-powered feedback, role recommendations, and a project rewriter – Powered by Groq (GPT-OSS 120B).
 
 
 ##  Features
@@ -24,7 +24,7 @@ An intelligent Streamlit web application that analyzes resumes against job descr
 ##  Tech Stack
 
 - **Frontend/App**: Streamlit
-- **LLM API**: Groq (Llama 3.3 70B)
+- **LLM API**: Groq (GPT-OSS 120B via OpenAI-compatible endpoint)
 - **Semantic Scoring**: Sentence‑Transformers (`all-MiniLM-L6-v2`)
 - **Keyword Scoring**: Scikit‑learn (TF‑IDF + cosine similarity)
 - **Skill Scoring** : Regex-based skill overlap
@@ -98,7 +98,7 @@ Your key takes priority over the shared key when entered.
 - Skill List – Edit SKILLS_LIST in matcher.py to add or remove skills.
 - Scoring Weights – In calculate_hybrid_score(), the default formula is **(0.5 × Skill Overlap) + (0.2 × Title Match) + (0.2 × Semantic) + (0.1 × TF-IDF)**. Adjust as needed.
 - Job Titles List – Edit `JOB_TITLES` in `matcher.py` to add or remove job titles for title matching.
-- LLM Model – Change model="llama-3.3-70b-versatile" in _call_groq() to another Groq model.
+- LLM Model – Change model="openai/gpt-oss-120b" in _call_groq() to another Groq model.
 
 ##  Live Demo
 

@@ -22,7 +22,7 @@ def _call_groq(api_key, system_message, user_prompt, max_tokens=1500):
     """
     client = Groq(api_key=api_key)
     response = client.chat.completions.create(
-        model="llama-3.3-70b-versatile",
+        model="openai/gpt-oss-120b",
         messages=[
             {"role": "system", "content": system_message},
             {"role": "user",   "content": user_prompt}
