@@ -345,7 +345,7 @@ with st.sidebar:
     st.markdown("3. API Keys → Create Key → Paste above")
 
     st.markdown("---")
-    st.markdown("**🤖 Model:** Llama 3.3 70B via Groq")
+    st.markdown("**🤖 Model:** openai/gpt-oss-120b")
         
 
     st.markdown("---")
